@@ -41,21 +41,42 @@
                 origin: { x: 0.5, y: 0.5 }
             });
         }, 2000);
+
+        //Musica
         const music = document.getElementById("bgMusic");
+        let fadeInterval = null;
 
         function activarMusica() {
-            music.volume = 0.3;
+            // Seguridad: evitar doble ejecución
+            if (!music.paused) return;
+
+            // Empezar en 1:05
+            music.currentTime = 65;
+
+            // Iniciar en silencio
+            music.volume = 0;
             music.play();
 
-            // Quitar el listener para que no se dispare más veces
+            // Fade in
+            let vol = 0;
+            fadeInterval = setInterval(() => {
+                vol += 0.03;            // velocidad del fade
+                if (vol >= 0.3) {       // volumen final
+                    vol = 0.3;
+                    clearInterval(fadeInterval);
+                }
+                music.volume = vol;
+            }, 200);
+
+            // Quitar listeners
             document.removeEventListener("touchstart", activarMusica);
             document.removeEventListener("click", activarMusica);
         }
 
-        // Para móvil
+        // Móvil
         document.addEventListener("touchstart", activarMusica);
 
-        // Backup para desktop
+        // Desktop backup
         document.addEventListener("click", activarMusica);
     </script>
 </body>
